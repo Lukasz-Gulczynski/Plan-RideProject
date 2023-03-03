@@ -1,0 +1,92 @@
+﻿@model IEnumerable<RouteDto>
+@{
+    var minRating = ViewBag.MinRating ?? 0;
+    var maxRatingValue = 5;
+    var minRatingSelectList = new List<SelectListItem>();
+
+    for(int i=0; i <= maxRatingValue; i++)
+    {
+        var listItem = new SelectListItem(text:"",value: i.ToString());
+        switch(i){
+            case 5: listItem.Text = "five stars";break;
+            case 4: listItem.Text = "four stars";break;
+            case 3: listItem.Text = "three stars";break;
+            case 2: listItem.Text = "two stars";break;
+            case 1: listItem.Text = "one star";break;
+            default: listItem.Text = "Any";break;
+        }
+        if(i== minRating)
+            listItem.Selected = true;
+        minRatingSelectList.Add(listItem);
+    }
+}
+
+<div id="min-rating-select">
+    <form asp-action="Rating" method="get">
+        <div class="form-group">
+            <label class="form-label">Rating from:</label>
+            @Html.DropDownList("min", minRatingSelectList, new {@class="",@onchange="this.form.submit()"})
+        </div>
+    </form>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<table id="indexTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                <label asp-for="@Model.First().Name"></label>
+            </th>
+            <th>
+                <label>From </label>
+            </th>
+            <th>
+                <label>To </label>
+            </th>
+            <th>
+                <label asp-for="@Model.First().AverageScore">Rating</label>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.StartingCity
+                </td>
+                <td>
+                    @item.DestinationCity
+                </td>
+                <td>
+                    <div class="table-hidden-value">@item.AverageScore</div>
+                    <a asp-action="Reviews" asp-route-id=@item.Id>
+                        <div class="route-collection-rating" id="route-rating-@item.Id">
+                            <input type="hidden" asp-for="@item.AverageScore" id="rating-value-@item.Id" />
+                        </div>
+                    </a>
+                </td>
+                <td>
+                    <a class="btn btn-outline-info grey-button" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a class="btn btn-outline-primary grey-button" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-outline-danger grey-button" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
